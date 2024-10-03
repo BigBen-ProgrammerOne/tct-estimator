@@ -71,15 +71,6 @@ def get_weather_data(latitude, longitude, date_time):
               f"{date_time}, {latitude}, {longitude}: {e}")
         return None
 
-def transform_duration_to_text(duration):
-    hours = int(duration)
-    minutes = round((duration - hours) * 60)
-    if hours > 0:
-        return (f"{hours} hr{'s' if hours > 1 else ''} "
-                f"{minutes} min{'s' if minutes != 1 else ''}")
-    else:
-        return f"{minutes} min{'s' if minutes != 1 else ''}"
-
 
 # Title Display
 st.title('Truck Cycle Time Estimator App')
@@ -94,11 +85,20 @@ st.write('\n')
 
 
 # Basis Section
+# st.subheader('Basis', divider='gray')
+# time_basis_input = st.selectbox(
+#     'Select a basis:',
+#     ('BATCH START TIME', 'TIME OUT'),
+#     index=None,
+#     placeholder='Select one...',
+# )
+# st.write('Confirmed: ', time_basis_input)
+# st.write('\n')
 time_basis_input = 'TIME OUT'
 
 
 # Generate Estimates Section
-st.subheader('Compute for TCT', divider='gray')
+st.subheader('Compute Estimate TCT', divider='gray')
 if st.button('Compute'):
     st.write('Computing...')
     st.write('\n')
@@ -322,7 +322,7 @@ if st.button('Compute'):
         pd.to_timedelta(duration_3_pred, unit='h')).dt.floor('min')
 
 
-    # Timestamp Results
+    # Results
     df_results = df_features.copy()
     results_cols = [
         'EST PLANT OUT',
@@ -331,21 +331,6 @@ if st.button('Compute'):
         'EST PLANT IN',
     ]
     df_results = df_results[results_cols]
-    st.subheader('Estimate Times', divider='gray')
+    st.subheader('Estimated TCT', divider='gray')
     st.write(df_results)
-    st.write('\n')
-    
-    
-    # Duration Results
-    duration_dict = {
-        'TRAVEL DURATION TO JOBSITE':
-        [transform_duration_to_text(d) for d in duration_1_pred],
-        'DURATION OF STAY AT JOBSITE':
-        [transform_duration_to_text(d) for d in duration_2_pred],
-        'RETURN DURATION BACK TO PLANT':
-        [transform_duration_to_text(d) for d in duration_3_pred],
-    }
-    df_duration = pd.DataFrame(duration_dict)
-    st.subheader('Estimate Durations', divider='gray')
-    st.write(df_duration)
     st.write('\n')
