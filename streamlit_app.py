@@ -94,7 +94,7 @@ st.write('\n')
 
 
 # Basis Section
-time_basis_input = 'TIMEOUT'
+time_basis_input = 'TIME OUT'
 
 
 # Generate Estimates Section
@@ -106,11 +106,10 @@ if st.button('Compute'):
     
     # Data Reading
     sheet_name = time_basis_input.replace(' ', '%20')
-    sheet_id = '1Pl3_F9QY721amRYWj8aUzT63hYDy836SJ8jQoGv86gE'
+    sheet_id = '1WzRwcRVZP04lo4o2VMfnlpEElw3BhS6_q1MDlMNogus'
     url = (f"https://docs.google.com/spreadsheets/d/{sheet_id}"
            f"/gviz/tq?tqx=out:csv&sheet={sheet_name}")
     df = pd.read_csv(url, parse_dates=[time_basis_input])
-    st.write(df[time_basis_input])
     df[time_basis_input] = df[time_basis_input].dt.time
     
     
@@ -121,12 +120,12 @@ if st.button('Compute'):
     st.write(df_filtered)
     st.write('\n')
     keep_cols = [
-        'RUNNING VOL',
+        'RUNNING VOL.',
         time_basis_input,
         'PLACEMENT FAMILY',
         'STRUCTURE FAMILY',
-        'LATITUDE',
-        'LONGITUDE',
+        'Latitude',
+        'Longitude',
     ]
     df_filtered = df_filtered[keep_cols]
 
@@ -148,11 +147,11 @@ if st.button('Compute'):
     ref_lat, ref_lon = 14.902746, 120.838638
     df_features['radial_distance'] = df_features.apply(
         lambda row: great_circle_distance(
-            row['LATITUDE'], row['LONGITUDE'], ref_lat, ref_lon), axis=1
+            row['Latitude'], row['Longitude'], ref_lat, ref_lon), axis=1
     )
     df_features['angle'] = df_features.apply(
         lambda row: calculate_bearing(
-            row['LATITUDE'], row['LONGITUDE'], ref_lat, ref_lon), axis=1
+            row['Latitude'], row['Longitude'], ref_lat, ref_lon), axis=1
     )
     
     # Structure & Placement
@@ -175,7 +174,7 @@ if st.button('Compute'):
 
     # Feature Renaming
     df_features.rename(columns={
-        'RUNNING VOL': 'running_volume',
+        'RUNNING VOL.': 'running_volume',
         'PLACEMENT FAMILY': 'placement_type',
         'STRUCTURE FAMILY': 'structure_type',
     }, inplace=True)
@@ -246,8 +245,8 @@ if st.button('Compute'):
         df_model_2[col] = None
     for idx, row in df_model_2.iterrows():
         date_time = pd.to_datetime(row['EST ARRIVAL AT JOBSITE']).tz_localize(pst)
-        latitude = row['LATITUDE']
-        longitude = row['LONGITUDE']
+        latitude = row['Latitude']
+        longitude = row['Longitude']
         weather_data = get_weather_data(latitude, longitude, date_time)
         if weather_data:
             for col in weather_cols:
@@ -289,8 +288,8 @@ if st.button('Compute'):
     for idx, row in df_model_3.iterrows():
         date_time = pd.to_datetime(
             row['EST DEPARTURE FROM JOBSITE']).tz_localize(pst)
-        latitude = row['LATITUDE']
-        longitude = row['LONGITUDE']
+        latitude = row['Latitude']
+        longitude = row['Longitude']
         weather_data = get_weather_data(latitude, longitude, date_time)
         if weather_data:
             for col in weather_cols:
